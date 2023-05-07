@@ -1,2 +1,2 @@
 #!bin/sh
-top -i
+free
