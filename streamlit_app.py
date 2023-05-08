@@ -11,7 +11,7 @@ from st_aggrid.shared import GridUpdateMode
 # Requisição de dados feita por subprocess executando arquivos bash dentro da pasta shellScripts
 
 st.set_page_config(
-    layout='centered'
+    layout='wide'
 )
 
 # Inicialização de dados
@@ -90,28 +90,29 @@ threadProcessList.start()
 threadProcessList.join()
 
 # Garante auto update
-st_autorefresh(interval=10*1000, key='dataframerefresh')
+st_autorefresh(interval=2*1000, key='dataframerefresh')
 # Row A
 memoriaLivre = (memoryUsage.iloc[0][1])
 memoriaEmUso = (memoryUsage.iloc[1][1])
 st.markdown('### Visão Geral do Sistema')
-col1, col2, col3= st.columns(3)
+col1, col2, col3,col4= st.columns(4)
 col1.metric("Uso da CPU", cpuUsage.columns[1])
 col1.metric("Tempo médio de ociosidade", str(round(float(idleCpu.columns[2]),1)) + "%")
-col2.metric("Memória Física", str(int(memory.iloc[0][1])/1000) + "Mb")
-col2.metric("Memória Virtual", str(int(memory.iloc[1][1])/1000) + "Mb")
-col3.metric("Número de Processos", str(len(processList)))
-col3.metric("Número de Threads", str(threadsTotal.columns[0]))
+col1.metric("Memória Física", str(int(memory.iloc[0][1])/1000) + "Mb")
+col1.metric("Memória Virtual", str(int(memory.iloc[1][1])/1000) + "Mb")
+col1.metric("Número de Processos", str(len(processList)))
+col1.metric("Número de Threads", str(threadsTotal.columns[0]))
 
-st.markdown("Uso de Memória")
 d = {'Type': ['used','free','shared','buff/cache','available'], "Value": [memory.iloc[0][2],memory.iloc[0][3],memory.iloc[0][4],memory.iloc[0][5],memory.iloc[0][6]]}
 dfMemory = pd.DataFrame(data=d)
-plost.donut_chart(
-    data=dfMemory, color='Type', legend='bottom', theta='Value',
-)
+with col2.container():
+    st.markdown("Uso de Memória")
+    plost.donut_chart(
+        data=dfMemory, color='Type', legend='bottom', theta='Value',
+    )
 
 threadsList = threadsList.drop(columns=["Unnamed: 0"])
-st.markdown("Lista de Threads")
-aggrid_interactive_table(threadsList)
-st.markdown("Lista de Processos")
-aggrid_interactive_table(processList)
+col4.markdown("Lista de Threads")
+col4.dataframe(threadsList)
+col3.markdown("Lista de Processos")
+col3.dataframe(processList)
