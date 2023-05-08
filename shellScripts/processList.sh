@@ -1,2 +1,2 @@
 #!bin/sh
-ps -aux | less
+ps -eo user,pid,%cpu,%mem,vsz,rss

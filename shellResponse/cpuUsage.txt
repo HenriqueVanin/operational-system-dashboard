@@ -1,1 +1,1 @@
-CPU-Usage: 40%
+CPU-Usage: 14%
